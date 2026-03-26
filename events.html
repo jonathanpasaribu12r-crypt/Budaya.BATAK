@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Wisata - Budaya Batak</title>
+    <title>Manajemen Event - Budaya Batak</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- DatePicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/dist/css/bootstrap-datepicker.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/admin.css">
     <style>
@@ -315,8 +315,31 @@
             vertical-align: middle;
         }
 
-        .rating {
-            color: #D4AF37;
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
         }
 
         .action-btns {
@@ -361,8 +384,8 @@
             transform: scale(1.1);
         }
 
-        /* ===== MAP MINI ===== */
-        .map-mini {
+        /* ===== CALENDAR MINI ===== */
+        .calendar-mini {
             background: white;
             border-radius: 30px 10px 30px 10px;
             padding: 20px;
@@ -370,23 +393,47 @@
             margin-bottom: 20px;
         }
 
-        .map-header {
+        .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
 
-        .map-header h6 {
+        .calendar-header h6 {
             color: #B22222;
             font-weight: 600;
             margin: 0;
         }
 
-        #miniMap {
-            height: 200px;
-            border-radius: 20px 5px 20px 5px;
-            border: 2px solid #D4AF37;
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            font-weight: 600;
+            color: #D4AF37;
+            font-size: 0.9rem;
+        }
+
+        .calendar-date {
+            padding: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .calendar-date:hover {
+            background: #B22222;
+            color: white;
+        }
+
+        .calendar-date.event {
+            background: #D4AF37;
+            color: #2C2C2C;
+            font-weight: 600;
         }
 
         /* ===== MODAL ===== */
@@ -426,33 +473,16 @@
             border-radius: 20px;
         }
 
-        .facility-tag {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #f0f0f0;
-            border-radius: 50px;
-            margin: 5px;
-            cursor: pointer;
-            border: 2px solid #D4AF37;
+        .date-input-group {
+            position: relative;
         }
 
-        .facility-tag.selected {
-            background: #B22222;
-            color: white;
-            border-color: #D4AF37;
-        }
-
-        .facility-tag i {
-            margin-right: 5px;
-        }
-
-        .price-input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .price-input-group .form-control {
-            flex: 1;
+        .date-input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #D4AF37;
         }
 
         /* ===== RESPONSIVE ===== */
@@ -517,13 +547,13 @@
                     <span>Galeri</span>
                 </a>
             </li>
-            <li>
+            <li class="active">
                 <a href="events.html">
                     <i class="fas fa-calendar"></i>
                     <span>Event</span>
                 </a>
             </li>
-            <li class="active">
+            <li>
                 <a href="wisata.html">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Wisata</span>
@@ -574,9 +604,9 @@
 
         <!-- Page Header -->
         <div class="page-header">
-            <h2>Manajemen Wisata</h2>
+            <h2>Manajemen Event</h2>
             <button class="btn-add" onclick="openAddModal()">
-                <i class="fas fa-plus me-2"></i>Tambah Wisata
+                <i class="fas fa-plus me-2"></i>Tambah Event
             </button>
         </div>
 
@@ -584,90 +614,78 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-map-marker-alt"></i>
+                    <i class="fas fa-calendar-check"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>25</h3>
-                    <p>Total Wisata</p>
+                    <h3>12</h3>
+                    <p>Total Event</p>
                 </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-star"></i>
+                    <i class="fas fa-clock"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>4.8</h3>
-                    <p>Rata-rata Rating</p>
+                    <h3>5</h3>
+                    <p>Event Mendatang</p>
                 </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-image"></i>
+                    <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>156</h3>
-                    <p>Total Foto</p>
+                    <h3>7</h3>
+                    <p>Event Selesai</p>
                 </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>12.5K</h3>
-                    <p>Total Likes</p>
+                    <h3>2.5K</h3>
+                    <p>Total Peserta</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Map Mini -->
-        <div class="map-mini">
-            <div class="map-header">
-                <h6>Peta Wisata Batak</h6>
-                <button class="btn btn-sm btn-outline-primary" onclick="openFullMap()">
-                    <i class="fas fa-expand"></i> Perbesar
-                </button>
-            </div>
-            <div id="miniMap"></div>
         </div>
 
         <!-- Table Card -->
         <div class="table-card">
             <div class="table-header">
-                <h5>Daftar Wisata Budaya Batak</h5>
+                <h5>Daftar Event Budaya Batak</h5>
                 <div class="filter-section">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">Semua Status</option>
+                        <option value="upcoming">Mendatang</option>
+                        <option value="ongoing">Berlangsung</option>
+                        <option value="completed">Selesai</option>
+                    </select>
+                    
                     <select class="filter-select" id="categoryFilter">
                         <option value="all">Semua Kategori</option>
-                        <option value="alam">Alam</option>
-                        <option value="sejarah">Sejarah</option>
-                        <option value="budaya">Budaya</option>
-                        <option value="religi">Religi</option>
-                        <option value="kuliner">Kuliner</option>
+                        <option value="festival">Festival</option>
+                        <option value="upacara">Upacara Adat</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="pameran">Pameran</option>
                     </select>
                     
-                    <select class="filter-select" id="ratingFilter">
-                        <option value="all">Semua Rating</option>
-                        <option value="5">5 Bintang</option>
-                        <option value="4">4+ Bintang</option>
-                        <option value="3">3+ Bintang</option>
-                    </select>
-                    
-                    <input type="text" class="filter-select" placeholder="Cari wisata..." id="searchInput">
+                    <input type="text" class="filter-select" placeholder="Cari event..." id="searchInput">
                 </div>
             </div>
 
-            <table class="table" id="wisataTable">
+            <table class="table" id="eventsTable">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Wisata</th>
+                        <th>Nama Event</th>
                         <th>Kategori</th>
+                        <th>Tanggal</th>
                         <th>Lokasi</th>
-                        <th>Rating</th>
-                        <th>Harga Tiket</th>
+                        <th>Peserta</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -675,214 +693,254 @@
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td>Danau Toba</td>
-                        <td>Alam</td>
-                        <td>Sumatera Utara</td>
-                        <td><span class="rating">★★★★★</span> 4.9</td>
-                        <td>Rp 15.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>Festival Danau Toba 2024</td>
+                        <td>Festival</td>
+                        <td>15-20 Jun 2024</td>
+                        <td>Parapat</td>
+                        <td>5.000+</td>
+                        <td><span class="status-badge info">Mendatang</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(1)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(1)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(1)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-view" onclick="viewEvent(1)"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" onclick="editEvent(1)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent(1)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>2</td>
-                        <td>Pulau Samosir</td>
-                        <td>Budaya</td>
-                        <td>Samosir</td>
-                        <td><span class="rating">★★★★★</span> 4.8</td>
-                        <td>Rp 10.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>Pameran Ulos Internasional</td>
+                        <td>Pameran</td>
+                        <td>10-12 Agt 2024</td>
+                        <td>Medan</td>
+                        <td>2.000+</td>
+                        <td><span class="status-badge info">Mendatang</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(2)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(2)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(2)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-view" onclick="viewEvent(2)"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" onclick="editEvent(2)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent(2)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>3</td>
-                        <td>Rumah Bolon</td>
-                        <td>Sejarah</td>
-                        <td>Pematang Purba</td>
-                        <td><span class="rating">★★★★½</span> 4.5</td>
-                        <td>Rp 25.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>Upacara Mangongkal Holi</td>
+                        <td>Upacara Adat</td>
+                        <td>5 Sep 2024</td>
+                        <td>Samosir</td>
+                        <td>1.500+</td>
+                        <td><span class="status-badge info">Mendatang</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(3)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(3)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(3)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-view" onclick="viewEvent(3)"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" onclick="editEvent(3)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent(3)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>4</td>
-                        <td>Tomok</td>
-                        <td>Budaya</td>
-                        <td>Samosir</td>
-                        <td><span class="rating">★★★★★</span> 4.7</td>
-                        <td>Rp 10.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>Workshop Tenun Ulos</td>
+                        <td>Workshop</td>
+                        <td>20-22 Okt 2024</td>
+                        <td>Balige</td>
+                        <td>500+</td>
+                        <td><span class="status-badge warning">Berlangsung</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(4)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(4)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(4)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-view" onclick="viewEvent(4)"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" onclick="editEvent(4)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent(4)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>5</td>
-                        <td>Air Terjun Sipiso-piso</td>
-                        <td>Alam</td>
-                        <td>Karo</td>
-                        <td><span class="rating">★★★★½</span> 4.5</td>
-                        <td>Rp 20.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>Festival Kuliner Batak</td>
+                        <td>Festival</td>
+                        <td>5-7 Des 2023</td>
+                        <td>Medan</td>
+                        <td>3.000+</td>
+                        <td><span class="status-badge success">Selesai</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(5)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(5)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(5)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-view" onclick="viewEvent(5)"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" onclick="editEvent(5)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent(5)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>6</td>
-                        <td>Museum Batak TB Silalahi</td>
-                        <td>Sejarah</td>
-                        <td>Balige</td>
-                        <td><span class="rating">★★★★★</span> 4.8</td>
-                        <td>Rp 25.000</td>
-                        <td><span class="status-badge warning">Renovasi</span></td>
+                        <td>Gondang Festival</td>
+                        <td>Festival</td>
+                        <td>12-14 Nov 2023</td>
+                        <td>Toba</td>
+                        <td>2.500+</td>
+                        <td><span class="status-badge success">Selesai</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(6)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(6)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(6)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-view" onclick="viewEvent(6)"><i class="fas fa-eye"></i></button>
+                                <button class="btn-action btn-edit" onclick="editEvent(6)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteEvent(6)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- Calendar Mini -->
+        <div class="calendar-mini">
+            <div class="calendar-header">
+                <h6>Juni 2024</h6>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-chevron-left"></i></button>
+                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="calendar-grid">
+                <div class="calendar-day">M</div>
+                <div class="calendar-day">S</div>
+                <div class="calendar-day">S</div>
+                <div class="calendar-day">R</div>
+                <div class="calendar-day">K</div>
+                <div class="calendar-day">J</div>
+                <div class="calendar-day">S</div>
+                
+                <div class="calendar-date">26</div>
+                <div class="calendar-date">27</div>
+                <div class="calendar-date">28</div>
+                <div class="calendar-date">29</div>
+                <div class="calendar-date">30</div>
+                <div class="calendar-date">31</div>
+                <div class="calendar-date">1</div>
+                
+                <div class="calendar-date">2</div>
+                <div class="calendar-date">3</div>
+                <div class="calendar-date">4</div>
+                <div class="calendar-date">5</div>
+                <div class="calendar-date">6</div>
+                <div class="calendar-date">7</div>
+                <div class="calendar-date">8</div>
+                
+                <div class="calendar-date">9</div>
+                <div class="calendar-date">10</div>
+                <div class="calendar-date">11</div>
+                <div class="calendar-date">12</div>
+                <div class="calendar-date">13</div>
+                <div class="calendar-date">14</div>
+                <div class="calendar-date event">15</div>
+                
+                <div class="calendar-date event">16</div>
+                <div class="calendar-date event">17</div>
+                <div class="calendar-date event">18</div>
+                <div class="calendar-date event">19</div>
+                <div class="calendar-date event">20</div>
+                <div class="calendar-date">21</div>
+                <div class="calendar-date">22</div>
+                
+                <div class="calendar-date">23</div>
+                <div class="calendar-date">24</div>
+                <div class="calendar-date">25</div>
+                <div class="calendar-date">26</div>
+                <div class="calendar-date">27</div>
+                <div class="calendar-date">28</div>
+                <div class="calendar-date">29</div>
+                
+                <div class="calendar-date">30</div>
+                <div class="calendar-date">1</div>
+                <div class="calendar-date">2</div>
+                <div class="calendar-date">3</div>
+                <div class="calendar-date">4</div>
+                <div class="calendar-date">5</div>
+                <div class="calendar-date">6</div>
+            </div>
+        </div>
     </div>
 
-    <!-- Modal Tambah/Edit Wisata -->
-    <div class="modal fade" id="wisataModal" tabindex="-1">
+    <!-- Modal Tambah/Edit Event -->
+    <div class="modal fade" id="eventModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Tambah Wisata</h5>
+                    <h5 class="modal-title" id="modalTitle">Tambah Event</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="wisataForm">
+                    <form id="eventForm">
                         <div class="row">
                             <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Nama Wisata" id="wisataName">
+                                <input type="text" class="form-control" placeholder="Nama Event" id="eventName">
                             </div>
                             <div class="col-md-4">
-                                <select class="form-select" id="wisataCategory">
+                                <select class="form-select" id="eventCategory">
                                     <option selected disabled>Kategori</option>
-                                    <option value="alam">Alam</option>
-                                    <option value="sejarah">Sejarah</option>
-                                    <option value="budaya">Budaya</option>
-                                    <option value="religi">Religi</option>
-                                    <option value="kuliner">Kuliner</option>
+                                    <option value="festival">Festival</option>
+                                    <option value="upacara">Upacara Adat</option>
+                                    <option value="workshop">Workshop</option>
+                                    <option value="pameran">Pameran</option>
                                 </select>
                             </div>
                         </div>
                         
-                        <textarea class="form-control" rows="3" placeholder="Deskripsi Wisata" id="wisataDesc"></textarea>
-                        
                         <div class="row">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Alamat" id="wisataAddress">
+                                <div class="date-input-group">
+                                    <input type="text" class="form-control datepicker" placeholder="Tanggal Mulai" id="startDate">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Kota" id="wisataCity">
+                                <div class="date-input-group">
+                                    <input type="text" class="form-control datepicker" placeholder="Tanggal Selesai" id="endDate">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Latitude" id="wisataLat">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Longitude" id="wisataLng">
-                            </div>
-                        </div>
+                        <input type="text" class="form-control" placeholder="Lokasi" id="eventLocation">
+                        
+                        <textarea class="form-control" rows="3" placeholder="Deskripsi Event" id="eventDesc"></textarea>
                         
                         <div class="row">
                             <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Harga Dewasa" id="priceAdult">
+                                <input type="text" class="form-control" placeholder="Estimasi Peserta" id="eventParticipants">
                             </div>
                             <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Harga Anak" id="priceChild">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Harga Asing" id="priceForeign">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Jam Buka" id="openTime">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Jam Tutup" id="closeTime">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Fasilitas</label>
-                            <div>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-parking"></i> Parkir</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-utensils"></i> Restoran</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-bed"></i> Penginapan</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-wifi"></i> WiFi</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-restroom"></i> Toilet</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-car"></i> Transportasi</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Upload Foto Wisata</label>
-                            <input type="file" class="form-control" id="wisataImages" multiple accept="image/*">
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Telepon" id="wisataPhone">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="email" class="form-control" placeholder="Email" id="wisataEmail">
-                            </div>
-                        </div>
-                        
-                        <input type="url" class="form-control" placeholder="Website" id="wisataWebsite">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <select class="form-select" id="wisataStatus">
-                                    <option value="active">Aktif</option>
-                                    <option value="inactive">Tidak Aktif</option>
-                                    <option value="renovation">Renovasi</option>
+                                <select class="form-select" id="eventStatus">
+                                    <option value="upcoming">Mendatang</option>
+                                    <option value="ongoing">Berlangsung</option>
+                                    <option value="completed">Selesai</option>
                                 </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="eventFeatured">
+                                    <option value="0">Event Biasa</option>
+                                    <option value="1">Event Unggulan</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Upload Gambar Event</label>
+                            <input type="file" class="form-control" id="eventImage">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Kontak Person" id="eventContact">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Website / Link" id="eventLink">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="saveWisata()">Simpan</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEvent()">Simpan</button>
                 </div>
             </div>
         </div>
@@ -897,7 +955,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menghapus wisata ini?</p>
+                    <p>Apakah Anda yakin ingin menghapus event ini?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -907,37 +965,30 @@
         </div>
     </div>
 
-    <!-- Modal Lihat Wisata -->
+    <!-- Modal Lihat Event -->
     <div class="modal fade" id="viewModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Detail Wisata</h5>
+                    <h5 class="modal-title">Detail Event</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="https://source.unsplash.com/600x400/?lake,toba" class="img-fluid rounded mb-3">
+                            <img src="https://source.unsplash.com/600x400/?festival" class="img-fluid rounded mb-3">
                         </div>
                         <div class="col-md-6">
-                            <h4 class="text-gold">Danau Toba</h4>
-                            <p><i class="fas fa-map-marker-alt text-gold me-2"></i> Sumatera Utara</p>
-                            <p><i class="fas fa-tag text-gold me-2"></i> Alam</p>
-                            <p><span class="rating">★★★★★</span> 4.9 (2.500 ulasan)</p>
-                            <p><i class="fas fa-ticket-alt text-gold me-2"></i> Rp 15.000 - Rp 50.000</p>
+                            <h4 class="text-gold">Festival Danau Toba 2024</h4>
+                            <p><i class="fas fa-calendar text-gold me-2"></i> 15-20 Juni 2024</p>
+                            <p><i class="fas fa-map-marker-alt text-gold me-2"></i> Parapat, Sumatera Utara</p>
+                            <p><i class="fas fa-users text-gold me-2"></i> 5.000+ Peserta</p>
+                            <p><i class="fas fa-tag text-gold me-2"></i> Festival</p>
                         </div>
                     </div>
                     <div class="mt-3">
                         <h6>Deskripsi</h6>
-                        <p>Danau vulkanik terbesar di dunia dengan Pulau Samosir di tengahnya. Keindahan alam yang memukau dengan budaya Batak yang kental.</p>
-                    </div>
-                    <div class="mt-3">
-                        <h6>Fasilitas</h6>
-                        <span class="facility-tag"><i class="fas fa-parking"></i> Parkir</span>
-                        <span class="facility-tag"><i class="fas fa-utensils"></i> Restoran</span>
-                        <span class="facility-tag"><i class="fas fa-bed"></i> Penginapan</span>
-                        <span class="facility-tag"><i class="fas fa-wifi"></i> WiFi</span>
+                        <p>Event tahunan terbesar yang menampilkan seluruh kekayaan budaya Batak. Dimeriahkan dengan tari tortor massal, pameran ulos, kuliner tradisional, dan berbagai pertunjukan seni.</p>
                     </div>
                 </div>
             </div>
@@ -949,7 +1000,8 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/locales/bootstrap-datepicker.id.min.js"></script>
     
     <script>
         // Toggle sidebar
@@ -976,100 +1028,72 @@
 
         // Initialize DataTable
         $(document).ready(function() {
-            $('#wisataTable').DataTable({
+            $('#eventsTable').DataTable({
                 pageLength: 10,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
                 }
             });
 
-            // Initialize Mini Map
-            var miniMap = L.map('miniMap').setView([2.5, 98.8], 7);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(miniMap);
-
-            // Add markers for each destination
-            var markers = [
-                { lat: 2.6845, lng: 98.8756, name: 'Danau Toba' },
-                { lat: 2.5833, lng: 98.8167, name: 'Pulau Samosir' },
-                { lat: 2.9, lng: 98.75, name: 'Rumah Bolon' },
-                { lat: 2.9167, lng: 98.6167, name: 'Sipiso-piso' }
-            ];
-
-            markers.forEach(function(marker) {
-                L.marker([marker.lat, marker.lng])
-                    .addTo(miniMap)
-                    .bindPopup(marker.name);
+            // Initialize DatePicker
+            $('.datepicker').datepicker({
+                format: 'dd-mm-yyyy',
+                language: 'id',
+                autoclose: true
             });
         });
 
         // Filter functions
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
         document.getElementById('categoryFilter').addEventListener('change', filterTable);
-        document.getElementById('ratingFilter').addEventListener('change', filterTable);
         document.getElementById('searchInput').addEventListener('keyup', filterTable);
 
         function filterTable() {
+            const status = document.getElementById('statusFilter').value;
             const category = document.getElementById('categoryFilter').value;
-            const rating = document.getElementById('ratingFilter').value;
             const search = document.getElementById('searchInput').value.toLowerCase();
             
-            console.log('Filter:', category, rating, search);
-        }
-
-        // Facility tags
-        function toggleFacility(element) {
-            element.classList.toggle('selected');
+            console.log('Filter:', status, category, search);
         }
 
         // Modal functions
-        let currentWisataId = null;
+        let currentEventId = null;
         let deleteId = null;
 
         function openAddModal() {
-            currentWisataId = null;
-            document.getElementById('modalTitle').textContent = 'Tambah Wisata';
-            document.getElementById('wisataForm').reset();
-            
-            // Reset facility tags
-            document.querySelectorAll('.facility-tag').forEach(tag => {
-                tag.classList.remove('selected');
-            });
-            
-            new bootstrap.Modal(document.getElementById('wisataModal')).show();
+            currentEventId = null;
+            document.getElementById('modalTitle').textContent = 'Tambah Event';
+            document.getElementById('eventForm').reset();
+            new bootstrap.Modal(document.getElementById('eventModal')).show();
         }
 
-        function editWisata(id) {
-            currentWisataId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Wisata';
-            // Load data wisata
-            new bootstrap.Modal(document.getElementById('wisataModal')).show();
+        function editEvent(id) {
+            currentEventId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Event';
+            // Load data event
+            new bootstrap.Modal(document.getElementById('eventModal')).show();
         }
 
-        function viewWisata(id) {
+        function viewEvent(id) {
             new bootstrap.Modal(document.getElementById('viewModal')).show();
         }
 
-        function deleteWisata(id) {
+        function deleteEvent(id) {
             deleteId = id;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
 
         function confirmDelete() {
-            console.log('Menghapus wisata ID:', deleteId);
+            console.log('Menghapus event ID:', deleteId);
+            // Implementasi hapus
             bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-            alert('Wisata berhasil dihapus!');
+            alert('Event berhasil dihapus!');
         }
 
-        function saveWisata() {
+        function saveEvent() {
             // Implementasi simpan
-            bootstrap.Modal.getInstance(document.getElementById('wisataModal')).hide();
-            alert('Wisata berhasil disimpan!');
-        }
-
-        function openFullMap() {
-            window.open('https://www.openstreetmap.org/#map=8/2.5/98.8', '_blank');
+            bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
+            alert('Event berhasil disimpan!');
         }
     </script>
 </body>

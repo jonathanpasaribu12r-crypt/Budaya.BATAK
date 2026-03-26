@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Wisata - Budaya Batak</title>
+    <title>Manajemen Users - Budaya Batak</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/admin.css">
     <style>
@@ -301,6 +299,14 @@
             outline: none;
         }
 
+        .search-input {
+            padding: 8px 15px;
+            border: 2px solid #D4AF37;
+            border-radius: 50px;
+            outline: none;
+            min-width: 250px;
+        }
+
         .table {
             width: 100%;
         }
@@ -315,8 +321,43 @@
             vertical-align: middle;
         }
 
-        .rating {
-            color: #D4AF37;
+        .role-badge {
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .role-badge.admin {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .role-badge.editor {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .role-badge.user {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .action-btns {
@@ -352,41 +393,13 @@
             transform: scale(1.1);
         }
 
-        .btn-view {
+        .btn-reset {
             background: #2C2C2C;
         }
 
-        .btn-view:hover {
+        .btn-reset:hover {
             background: #1a1a1a;
             transform: scale(1.1);
-        }
-
-        /* ===== MAP MINI ===== */
-        .map-mini {
-            background: white;
-            border-radius: 30px 10px 30px 10px;
-            padding: 20px;
-            border: 3px solid #D4AF37;
-            margin-bottom: 20px;
-        }
-
-        .map-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .map-header h6 {
-            color: #B22222;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        #miniMap {
-            height: 200px;
-            border-radius: 20px 5px 20px 5px;
-            border: 2px solid #D4AF37;
         }
 
         /* ===== MODAL ===== */
@@ -422,37 +435,28 @@
             outline: none;
         }
 
-        textarea.form-control {
-            border-radius: 20px;
-        }
-
-        .facility-tag {
-            display: inline-block;
-            padding: 5px 15px;
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: #f0f0f0;
-            border-radius: 50px;
-            margin: 5px;
-            cursor: pointer;
-            border: 2px solid #D4AF37;
-        }
-
-        .facility-tag.selected {
-            background: #B22222;
-            color: white;
-            border-color: #D4AF37;
-        }
-
-        .facility-tag i {
-            margin-right: 5px;
-        }
-
-        .price-input-group {
+            border: 3px solid #D4AF37;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            overflow: hidden;
         }
 
-        .price-input-group .form-control {
-            flex: 1;
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-preview i {
+            font-size: 3rem;
+            color: #B22222;
         }
 
         /* ===== RESPONSIVE ===== */
@@ -481,6 +485,10 @@
             
             .filter-section {
                 flex-direction: column;
+            }
+            
+            .search-input {
+                width: 100%;
             }
             
             .stats-grid {
@@ -523,7 +531,7 @@
                     <span>Event</span>
                 </a>
             </li>
-            <li class="active">
+            <li>
                 <a href="wisata.html">
                     <i class="fas fa-map-marked-alt"></i>
                     <span>Wisata</span>
@@ -535,7 +543,7 @@
                     <span>Pesan</span>
                 </a>
             </li>
-            <li>
+            <li class="active">
                 <a href="users.html">
                     <i class="fas fa-users"></i>
                     <span>Users</span>
@@ -574,9 +582,9 @@
 
         <!-- Page Header -->
         <div class="page-header">
-            <h2>Manajemen Wisata</h2>
+            <h2>Manajemen Users</h2>
             <button class="btn-add" onclick="openAddModal()">
-                <i class="fas fa-plus me-2"></i>Tambah Wisata
+                <i class="fas fa-plus me-2"></i>Tambah User
             </button>
         </div>
 
@@ -584,188 +592,198 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-map-marker-alt"></i>
+                    <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>25</h3>
-                    <p>Total Wisata</p>
+                    <h3>1.248</h3>
+                    <p>Total Users</p>
                 </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-star"></i>
+                    <i class="fas fa-user-tie"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>4.8</h3>
-                    <p>Rata-rata Rating</p>
+                    <h3>12</h3>
+                    <p>Admin</p>
                 </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-image"></i>
+                    <i class="fas fa-user-edit"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>156</h3>
-                    <p>Total Foto</p>
+                    <h3>24</h3>
+                    <p>Editor</p>
                 </div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-user"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>12.5K</h3>
-                    <p>Total Likes</p>
+                    <h3>1.212</h3>
+                    <p>User Biasa</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Map Mini -->
-        <div class="map-mini">
-            <div class="map-header">
-                <h6>Peta Wisata Batak</h6>
-                <button class="btn btn-sm btn-outline-primary" onclick="openFullMap()">
-                    <i class="fas fa-expand"></i> Perbesar
-                </button>
-            </div>
-            <div id="miniMap"></div>
         </div>
 
         <!-- Table Card -->
         <div class="table-card">
             <div class="table-header">
-                <h5>Daftar Wisata Budaya Batak</h5>
+                <h5>Daftar Users</h5>
                 <div class="filter-section">
-                    <select class="filter-select" id="categoryFilter">
-                        <option value="all">Semua Kategori</option>
-                        <option value="alam">Alam</option>
-                        <option value="sejarah">Sejarah</option>
-                        <option value="budaya">Budaya</option>
-                        <option value="religi">Religi</option>
-                        <option value="kuliner">Kuliner</option>
+                    <select class="filter-select" id="roleFilter">
+                        <option value="all">Semua Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="editor">Editor</option>
+                        <option value="user">User</option>
                     </select>
                     
-                    <select class="filter-select" id="ratingFilter">
-                        <option value="all">Semua Rating</option>
-                        <option value="5">5 Bintang</option>
-                        <option value="4">4+ Bintang</option>
-                        <option value="3">3+ Bintang</option>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">Semua Status</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Tidak Aktif</option>
                     </select>
                     
-                    <input type="text" class="filter-select" placeholder="Cari wisata..." id="searchInput">
+                    <input type="text" class="search-input" placeholder="Cari user..." id="searchInput">
                 </div>
             </div>
 
-            <table class="table" id="wisataTable">
+            <table class="table" id="usersTable">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Wisata</th>
-                        <th>Kategori</th>
-                        <th>Lokasi</th>
-                        <th>Rating</th>
-                        <th>Harga Tiket</th>
+                        <th>Avatar</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Role</th>
                         <th>Status</th>
+                        <th>Terdaftar</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td>Danau Toba</td>
-                        <td>Alam</td>
-                        <td>Sumatera Utara</td>
-                        <td><span class="rating">★★★★★</span> 4.9</td>
-                        <td>Rp 15.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #B22222; display: flex; align-items: center; justify-content: center; border: 2px solid #D4AF37;">
+                                <i class="fas fa-user text-gold"></i>
+                            </div>
+                        </td>
+                        <td><strong>Admin Utama</strong></td>
+                        <td>admin@budayabatak.com</td>
+                        <td><span class="role-badge admin">Admin</span></td>
+                        <td><span class="status-badge active">Aktif</span></td>
+                        <td>01 Jan 2024</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(1)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(1)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(1)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-edit" onclick="editUser(1)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-reset" onclick="resetPassword(1)"><i class="fas fa-key"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteUser(1)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>2</td>
-                        <td>Pulau Samosir</td>
-                        <td>Budaya</td>
-                        <td>Samosir</td>
-                        <td><span class="rating">★★★★★</span> 4.8</td>
-                        <td>Rp 10.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #2C2C2C; display: flex; align-items: center; justify-content: center; border: 2px solid #D4AF37;">
+                                <i class="fas fa-user text-gold"></i>
+                            </div>
+                        </td>
+                        <td><strong>Editor 1</strong></td>
+                        <td>editor1@budayabatak.com</td>
+                        <td><span class="role-badge editor">Editor</span></td>
+                        <td><span class="status-badge active">Aktif</span></td>
+                        <td>15 Feb 2024</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(2)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(2)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(2)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-edit" onclick="editUser(2)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-reset" onclick="resetPassword(2)"><i class="fas fa-key"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteUser(2)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>3</td>
-                        <td>Rumah Bolon</td>
-                        <td>Sejarah</td>
-                        <td>Pematang Purba</td>
-                        <td><span class="rating">★★★★½</span> 4.5</td>
-                        <td>Rp 25.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #D4AF37; display: flex; align-items: center; justify-content: center; border: 2px solid #B22222;">
+                                <i class="fas fa-user" style="color: #2C2C2C;"></i>
+                            </div>
+                        </td>
+                        <td><strong>Editor 2</strong></td>
+                        <td>editor2@budayabatak.com</td>
+                        <td><span class="role-badge editor">Editor</span></td>
+                        <td><span class="status-badge active">Aktif</span></td>
+                        <td>20 Feb 2024</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(3)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(3)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(3)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-edit" onclick="editUser(3)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-reset" onclick="resetPassword(3)"><i class="fas fa-key"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteUser(3)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>4</td>
-                        <td>Tomok</td>
-                        <td>Budaya</td>
-                        <td>Samosir</td>
-                        <td><span class="rating">★★★★★</span> 4.7</td>
-                        <td>Rp 10.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #B22222; display: flex; align-items: center; justify-content: center; border: 2px solid #D4AF37;">
+                                <i class="fas fa-user text-gold"></i>
+                            </div>
+                        </td>
+                        <td><strong>John Doe</strong></td>
+                        <td>john@email.com</td>
+                        <td><span class="role-badge user">User</span></td>
+                        <td><span class="status-badge active">Aktif</span></td>
+                        <td>05 Mar 2024</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(4)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(4)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(4)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-edit" onclick="editUser(4)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-reset" onclick="resetPassword(4)"><i class="fas fa-key"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteUser(4)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>5</td>
-                        <td>Air Terjun Sipiso-piso</td>
-                        <td>Alam</td>
-                        <td>Karo</td>
-                        <td><span class="rating">★★★★½</span> 4.5</td>
-                        <td>Rp 20.000</td>
-                        <td><span class="status-badge success">Aktif</span></td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #2C2C2C; display: flex; align-items: center; justify-content: center; border: 2px solid #D4AF37;">
+                                <i class="fas fa-user text-gold"></i>
+                            </div>
+                        </td>
+                        <td><strong>Jane Smith</strong></td>
+                        <td>jane@email.com</td>
+                        <td><span class="role-badge user">User</span></td>
+                        <td><span class="status-badge active">Aktif</span></td>
+                        <td>10 Mar 2024</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(5)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(5)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(5)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-edit" onclick="editUser(5)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-reset" onclick="resetPassword(5)"><i class="fas fa-key"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteUser(5)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>6</td>
-                        <td>Museum Batak TB Silalahi</td>
-                        <td>Sejarah</td>
-                        <td>Balige</td>
-                        <td><span class="rating">★★★★★</span> 4.8</td>
-                        <td>Rp 25.000</td>
-                        <td><span class="status-badge warning">Renovasi</span></td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #D4AF37; display: flex; align-items: center; justify-content: center; border: 2px solid #B22222;">
+                                <i class="fas fa-user" style="color: #2C2C2C;"></i>
+                            </div>
+                        </td>
+                        <td><strong>Budi Santoso</strong></td>
+                        <td>budi@email.com</td>
+                        <td><span class="role-badge user">User</span></td>
+                        <td><span class="status-badge inactive">Tidak Aktif</span></td>
+                        <td>15 Mar 2024</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn-action btn-view" onclick="viewWisata(6)"><i class="fas fa-eye"></i></button>
-                                <button class="btn-action btn-edit" onclick="editWisata(6)"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="deleteWisata(6)"><i class="fas fa-trash"></i></button>
+                                <button class="btn-action btn-edit" onclick="editUser(6)"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-reset" onclick="resetPassword(6)"><i class="fas fa-key"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteUser(6)"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -774,115 +792,107 @@
         </div>
     </div>
 
-    <!-- Modal Tambah/Edit Wisata -->
-    <div class="modal fade" id="wisataModal" tabindex="-1">
+    <!-- Modal Tambah/Edit User -->
+    <div class="modal fade" id="userModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Tambah Wisata</h5>
+                    <h5 class="modal-title" id="modalTitle">Tambah User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="wisataForm">
+                    <form id="userForm">
+                        <div class="avatar-preview" id="avatarPreview">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Upload Foto Profil</label>
+                            <input type="file" class="form-control" id="userAvatar" accept="image/*" onchange="previewAvatar(this)">
+                        </div>
+                        
                         <div class="row">
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Nama Wisata" id="wisataName">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Nama Lengkap" id="userName">
                             </div>
-                            <div class="col-md-4">
-                                <select class="form-select" id="wisataCategory">
-                                    <option selected disabled>Kategori</option>
-                                    <option value="alam">Alam</option>
-                                    <option value="sejarah">Sejarah</option>
-                                    <option value="budaya">Budaya</option>
-                                    <option value="religi">Religi</option>
-                                    <option value="kuliner">Kuliner</option>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" placeholder="Email" id="userEmail">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="password" class="form-control" placeholder="Password" id="userPassword">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control" placeholder="Konfirmasi Password" id="userConfirmPassword">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <select class="form-select" id="userRole">
+                                    <option selected disabled>Pilih Role</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="editor">Editor</option>
+                                    <option value="user">User Biasa</option>
                                 </select>
                             </div>
-                        </div>
-                        
-                        <textarea class="form-control" rows="3" placeholder="Deskripsi Wisata" id="wisataDesc"></textarea>
-                        
-                        <div class="row">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Alamat" id="wisataAddress">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Kota" id="wisataCity">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Latitude" id="wisataLat">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Longitude" id="wisataLng">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Harga Dewasa" id="priceAdult">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Harga Anak" id="priceChild">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Harga Asing" id="priceForeign">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Jam Buka" id="openTime">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Jam Tutup" id="closeTime">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Fasilitas</label>
-                            <div>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-parking"></i> Parkir</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-utensils"></i> Restoran</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-bed"></i> Penginapan</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-wifi"></i> WiFi</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-restroom"></i> Toilet</span>
-                                <span class="facility-tag" onclick="toggleFacility(this)"><i class="fas fa-car"></i> Transportasi</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Upload Foto Wisata</label>
-                            <input type="file" class="form-control" id="wisataImages" multiple accept="image/*">
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Telepon" id="wisataPhone">
-                            </div>
-                            <div class="col-md-6">
-                                <input type="email" class="form-control" placeholder="Email" id="wisataEmail">
-                            </div>
-                        </div>
-                        
-                        <input type="url" class="form-control" placeholder="Website" id="wisataWebsite">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <select class="form-select" id="wisataStatus">
+                                <select class="form-select" id="userStatus">
                                     <option value="active">Aktif</option>
                                     <option value="inactive">Tidak Aktif</option>
-                                    <option value="renovation">Renovasi</option>
                                 </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="No. Telepon" id="userPhone">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Alamat" id="userAddress">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" onclick="saveWisata()">Simpan</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Reset Password -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Reset password untuk user: <strong id="resetUserName">Admin Utama</strong></p>
+                    
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Password Baru</label>
+                            <input type="password" class="form-control" id="newPassword">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="confirmNewPassword">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="sendEmail">
+                            <label class="form-check-label">Kirim notifikasi ke email user</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmResetPassword()">Reset Password</button>
                 </div>
             </div>
         </div>
@@ -897,48 +907,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menghapus wisata ini?</p>
+                    <p>Apakah Anda yakin ingin menghapus user ini?</p>
+                    <p class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Tindakan ini tidak dapat dibatalkan!</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-danger" onclick="confirmDelete()">Hapus</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Lihat Wisata -->
-    <div class="modal fade" id="viewModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detail Wisata</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <img src="https://source.unsplash.com/600x400/?lake,toba" class="img-fluid rounded mb-3">
-                        </div>
-                        <div class="col-md-6">
-                            <h4 class="text-gold">Danau Toba</h4>
-                            <p><i class="fas fa-map-marker-alt text-gold me-2"></i> Sumatera Utara</p>
-                            <p><i class="fas fa-tag text-gold me-2"></i> Alam</p>
-                            <p><span class="rating">★★★★★</span> 4.9 (2.500 ulasan)</p>
-                            <p><i class="fas fa-ticket-alt text-gold me-2"></i> Rp 15.000 - Rp 50.000</p>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <h6>Deskripsi</h6>
-                        <p>Danau vulkanik terbesar di dunia dengan Pulau Samosir di tengahnya. Keindahan alam yang memukau dengan budaya Batak yang kental.</p>
-                    </div>
-                    <div class="mt-3">
-                        <h6>Fasilitas</h6>
-                        <span class="facility-tag"><i class="fas fa-parking"></i> Parkir</span>
-                        <span class="facility-tag"><i class="fas fa-utensils"></i> Restoran</span>
-                        <span class="facility-tag"><i class="fas fa-bed"></i> Penginapan</span>
-                        <span class="facility-tag"><i class="fas fa-wifi"></i> WiFi</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -949,7 +923,6 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
         // Toggle sidebar
@@ -976,100 +949,117 @@
 
         // Initialize DataTable
         $(document).ready(function() {
-            $('#wisataTable').DataTable({
+            $('#usersTable').DataTable({
                 pageLength: 10,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
-                }
-            });
-
-            // Initialize Mini Map
-            var miniMap = L.map('miniMap').setView([2.5, 98.8], 7);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(miniMap);
-
-            // Add markers for each destination
-            var markers = [
-                { lat: 2.6845, lng: 98.8756, name: 'Danau Toba' },
-                { lat: 2.5833, lng: 98.8167, name: 'Pulau Samosir' },
-                { lat: 2.9, lng: 98.75, name: 'Rumah Bolon' },
-                { lat: 2.9167, lng: 98.6167, name: 'Sipiso-piso' }
-            ];
-
-            markers.forEach(function(marker) {
-                L.marker([marker.lat, marker.lng])
-                    .addTo(miniMap)
-                    .bindPopup(marker.name);
+                },
+                order: [[6, 'desc']] // Urutkan berdasarkan tanggal terbaru
             });
         });
 
         // Filter functions
-        document.getElementById('categoryFilter').addEventListener('change', filterTable);
-        document.getElementById('ratingFilter').addEventListener('change', filterTable);
+        document.getElementById('roleFilter').addEventListener('change', filterTable);
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
         document.getElementById('searchInput').addEventListener('keyup', filterTable);
 
         function filterTable() {
-            const category = document.getElementById('categoryFilter').value;
-            const rating = document.getElementById('ratingFilter').value;
+            const role = document.getElementById('roleFilter').value;
+            const status = document.getElementById('statusFilter').value;
             const search = document.getElementById('searchInput').value.toLowerCase();
             
-            console.log('Filter:', category, rating, search);
+            console.log('Filter:', role, status, search);
         }
 
-        // Facility tags
-        function toggleFacility(element) {
-            element.classList.toggle('selected');
+        // Variables
+        let currentUserId = null;
+        let deleteId = null;
+        let resetId = null;
+
+        // Avatar preview
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').innerHTML = `<img src="${e.target.result}" alt="Avatar">`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         // Modal functions
-        let currentWisataId = null;
-        let deleteId = null;
-
         function openAddModal() {
-            currentWisataId = null;
-            document.getElementById('modalTitle').textContent = 'Tambah Wisata';
-            document.getElementById('wisataForm').reset();
-            
-            // Reset facility tags
-            document.querySelectorAll('.facility-tag').forEach(tag => {
-                tag.classList.remove('selected');
-            });
-            
-            new bootstrap.Modal(document.getElementById('wisataModal')).show();
+            currentUserId = null;
+            document.getElementById('modalTitle').textContent = 'Tambah User';
+            document.getElementById('userForm').reset();
+            document.getElementById('avatarPreview').innerHTML = '<i class="fas fa-user"></i>';
+            new bootstrap.Modal(document.getElementById('userModal')).show();
         }
 
-        function editWisata(id) {
-            currentWisataId = id;
-            document.getElementById('modalTitle').textContent = 'Edit Wisata';
-            // Load data wisata
-            new bootstrap.Modal(document.getElementById('wisataModal')).show();
+        function editUser(id) {
+            currentUserId = id;
+            document.getElementById('modalTitle').textContent = 'Edit User';
+            // Load data user
+            new bootstrap.Modal(document.getElementById('userModal')).show();
         }
 
-        function viewWisata(id) {
-            new bootstrap.Modal(document.getElementById('viewModal')).show();
+        function resetPassword(id) {
+            resetId = id;
+            const row = $(`button[onclick="resetPassword(${id})"]`).closest('tr');
+            const name = row.find('td:eq(2)').text();
+            document.getElementById('resetUserName').textContent = name;
+            new bootstrap.Modal(document.getElementById('resetPasswordModal')).show();
         }
 
-        function deleteWisata(id) {
+        function deleteUser(id) {
             deleteId = id;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
 
         function confirmDelete() {
-            console.log('Menghapus wisata ID:', deleteId);
+            console.log('Menghapus user ID:', deleteId);
+            
+            // Hapus baris dari tabel (simulasi)
+            const table = $('#usersTable').DataTable();
+            table.row($(`button[onclick="deleteUser(${deleteId})"]`).closest('tr')).remove().draw();
+            
             bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-            alert('Wisata berhasil dihapus!');
+            alert('User berhasil dihapus!');
         }
 
-        function saveWisata() {
+        function saveUser() {
+            // Validasi form
+            const password = document.getElementById('userPassword').value;
+            const confirmPassword = document.getElementById('userConfirmPassword').value;
+            
+            if (password && password !== confirmPassword) {
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
             // Implementasi simpan
-            bootstrap.Modal.getInstance(document.getElementById('wisataModal')).hide();
-            alert('Wisata berhasil disimpan!');
+            bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+            alert('User berhasil disimpan!');
         }
 
-        function openFullMap() {
-            window.open('https://www.openstreetmap.org/#map=8/2.5/98.8', '_blank');
+        function confirmResetPassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmNewPassword').value;
+            
+            if (!newPass) {
+                alert('Password baru tidak boleh kosong!');
+                return;
+            }
+            
+            if (newPass !== confirmPass) {
+                alert('Password dan konfirmasi password tidak cocok!');
+                return;
+            }
+            
+            console.log('Reset password user ID:', resetId, 'Password baru:', newPass);
+            
+            bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal')).hide();
+            alert('Password berhasil direset!');
         }
     </script>
 </body>
